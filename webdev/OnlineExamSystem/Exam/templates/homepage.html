@@ -1,0 +1,77 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+</head>
+  <body>
+    <style>
+      *{
+        color: black;
+      }
+      .main{
+        padding-left:5%;
+        display: grid;
+        grid-template-columns: 45% auto;
+        background-color: lightyellow;
+      }
+      button{
+        margin:1.5em;
+        margin-left:5em;
+      }
+      img{
+        height:630px;
+        width:45em;
+        transition:all 0.5s ease;
+      }
+      img:hover{
+        height:40em;
+        width:50em;
+        transition:all 0.5s ease;
+      }
+      .prof button[type=submit]:hover{
+        background: #87ff9b;
+      }
+      .student button[type=submit]:hover{
+        background: #a3d5ff;
+     }
+    </style>
+    <nav class="navbar navbar-light" style="background-color: orange">
+      <a class="navbar-brand"  style="color: black; padding-left: 480px; font-size: 50px; font-variant: small-caps;">Online Exam System</a>
+    </nav>
+      <div class="main">
+        <div class="abt">
+          <br><br>
+          <br>
+          <div class="prof">
+            <h2 style="color: black; font-size: 35px; font-variant: small-caps;">Professor Section: </h2>
+            <div class="row">
+              <form method="get" action="{% url 'faculty-login' %}">
+                  <button type="submit" class="btn btn-raised btn-lg" style="color: #745959">Login</button>
+              </form>
+              <form method="get" action="{% url 'faculty-register' %}">
+                  <button type="submit" class="btn btn-raised btn-lg" style="color: #745959">Signup</button>
+              </form>
+            </div>
+          </div>
+          <br><br>
+          <div class="student">
+            <h2 style="color: black; font-size: 35px; font-variant: small-caps;">Student Section: </h2>
+            <div class="row">
+              <form method="get" action="{% url 'login' %}">
+                  <button type="submit" class="btn btn-raised btn-lg" style="color: #745959">Login</button>
+              </form>
+              <form method="get" action="{% url 'register' %}">
+                  <button type="submit" class="btn btn-raised btn-lg" style="color: #745959">Signup</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="img">
+          <img src="{% static 'img/about.jpg' %}" alt="">
+        </div>
+    </div>
+  </body>
+</html>
