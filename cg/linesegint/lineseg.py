@@ -4,7 +4,6 @@ import random
 import pylab as pl
 import numpy as np
 
-finter=[]
 def onSegment(p, q, r):
     if ( (q[0] <= max(p[0], r[0])) and (q[0] >= min(p[0], r[0])) and 
            (q[1] <= max(p[1], r[1])) and (q[1] >= min(p[1], r[1]))):
@@ -12,15 +11,11 @@ def onSegment(p, q, r):
     return False
   
 def orientation(p, q, r):
-    # to find the orientation of an ordered triplet (p,q,r)
     # function returns the following values:
     # 0 : Collinear points
     # 1 : Clockwise points
     # 2 : Counterclockwise
-      
-    # See https://www.geeksforgeeks.org/orientation-3-ordered-points/amp/ 
-    # for details of below formula. 
-      
+          
     val = (float(q[1] - p[1]) * (r[0] - q[0])) - (float(q[0] - p[0]) * (r[1] - q[1]))
     if (val > 0):
           
@@ -81,13 +76,11 @@ def poi(line1, line2):
 
         div = det(xdiff, ydiff)
         if div == 0:
-           raise Exception('lines do not intersect')
-
+            return False
+        
         d = (det(*line1), det(*line2))
         x = det(d, xdiff) / div
         y = det(d, ydiff) / div
-        if (x,y) not in finter:
-            finter.append((x,y))
         return (x,y)
     else:
         return False
@@ -111,28 +104,38 @@ def main():
     with open('points.txt',"r") as fp:
         for i in fp.readlines():
             p.append(eval(i.strip("\n")))
-    print(p)
+    for i in range(len(p)):
+        print("line {}: {}".format(i+1,p[i]))
     n=len(p)
     eq=[]
+    ymin=p[0][0][1]
+    ymax=p[0][1][1]
     for i in range(n):
             for j in range(2):
+                if ymin>p[i][j][1]:
+                    ymin=p[i][j][1]
+                if ymax<p[i][j][1]:
+                    ymax=p[i][j][1]
                 t=1
                 if isleft(p[i][j],p,n): # 0: left 1: right
                     t=0
                 eq.append(Event(p[i][j],t,i))
     eq.sort(key=lambda eq: eq.e[0])
-    for e in eq:
-        print(e.e,e.t,e.s)
+
     sls=[] #sweepline status
     inters=[]
     l=len(eq)
     k=0
     for i in eq:
-        print("sls:",sls)
-        for e in eq:
-            print("iter ",k,":",e.e,e.t,e.s)
+        if i.t!=2:
+            for j in sls:
+                tup=poi(p[j[1]],[(i.e[0],ymin),(i.e[0],ymax)])
+                if tup:
+                    j[0]=tup
+            sls.sort(key=lambda sls: sls[0][1])
+
         k+=1
-        print("selected :",i.e,i.t,i.s)
+
         if i.t==0: #left end point
             sls.append([i.e,i.s])
             sls.sort(key=lambda sls: sls[0][1])
@@ -146,7 +149,7 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index][1]],p[sls[index+1][1]]),2,(min(sls[index][1],sls[index+1][1]),max(sls[index][1],sls[index+1][1]))))
+
                 elif index==len(sls)-1:
                     if poi(p[sls[index-1][1]],p[sls[index][1]]):
                         pi=Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1])))
@@ -155,15 +158,9 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1]))))
+
                 else:
-                    if poi(p[sls[index-1][1]],p[sls[index+1][1]]):
-                        pi=Event(poi(p[sls[index-1][1]],p[sls[index+1][1]]),2,(min(sls[index-1][1],sls[index+1][1]),max(sls[index-1][1],sls[index+1][1])))
-                        for r in range(len(eq)):
-                            if eq[r].e==pi.e:
-                                del eq[r]
-                                break
-                        
+                    
                     if poi(p[sls[index][1]],p[sls[index+1][1]]):
                         pi=Event(poi(p[sls[index][1]],p[sls[index+1][1]]),2,(min(sls[index][1],sls[index+1][1]),max(sls[index][1],sls[index+1][1])))
                         for r in range(len(eq)):
@@ -171,7 +168,7 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index][1]],p[sls[index+1][1]]),2,(min(sls[index][1],sls[index+1][1]),max(sls[index][1],sls[index+1][1]))))
+
                     if poi(p[sls[index-1][1]],p[sls[index][1]]):
                         pi=Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1])))
                         for r in range(len(eq)):
@@ -179,7 +176,7 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1]))))
+
             if len(sls)==2:
                 if index==0:
                     if poi(p[sls[index][1]],p[sls[index+1][1]]):
@@ -189,7 +186,7 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index][1]],p[sls[index+1][1]]),2,(min(sls[index][1],sls[index+1][1]),max(sls[index][1],sls[index+1][1]))))
+
                 else:
                     if poi(p[sls[index-1][1]],p[sls[index][1]]):
                         pi=Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1])))
@@ -198,18 +195,18 @@ def main():
                                 del eq[r]
                                 break
                         eq.append(pi)
-                        #eq.append(Event(poi(p[sls[index-1][1]],p[sls[index][1]]),2,(min(sls[index-1][1],sls[index][1]),max(sls[index-1][1],sls[index][1]))))
-                        #eq.append(inter[-1])
 
         if i.t==1: #right end point
-            print(sls)
+
             index=0
-            if [p[i.s][0],i.s] in sls:
-                index=sls.index([p[i.s][0],i.s])
-            elif [p[i.s][1],i.s] in sls:
-                index=sls.index([p[i.s][1],i.s])
-            else:
+            f=False
+            for j in range(len(sls)):
+                if sls[j][1]==i.s:
+                    f=True
+                    index=j
+            if not f:
                 continue
+
             if index>0 and index<len(sls)-1:
                 if poi(p[sls[index-1][1]],p[sls[index+1][1]]):
                     pi=Event(poi(p[sls[index-1][1]],p[sls[index+1][1]]),2,(min(sls[index-1][1],sls[index+1][1]),max(sls[index-1][1],sls[index+1][1])))
@@ -220,57 +217,36 @@ def main():
                     eq.append(pi)
             if len(sls)>0:
                 del sls[index]
-            print(sls)
         
         if i.t==2: #intersection point
-            #print(sls)
-            print("inter: ",i.e)
             inters.append(i.e)
-            print(p[i.s[0]],p[i.s[1]])
-            if [p[i.s[0]][0],i.s[0]] in sls:
-                index1=sls.index([p[i.s[0]][0],i.s[0]])
-            elif [p[i.s[0]][1],i.s[0]] in sls:
-                index1=sls.index([p[i.s[0]][1],i.s[0]])
-            else: index1=-1
 
-            if [p[i.s[1]][0],i.s[1]] in sls:
-                index2=sls.index([p[i.s[1]][0],i.s[1]])
-            elif [p[i.s[1]][1],i.s[1]] in sls:
-                index2=sls.index([p[i.s[1]][1],i.s[1]])
-            else: index2=-1
-            #index1=sls.index([p[i.s[0]][0],i.s[0]]) 
-            #index2=sls.index([p[i.s[1]][0],i.s[1]])
+            f1=False
+            for j in range(len(sls)):
+                if sls[j][1]==i.s[0]:
+                    f1=True
+                    index1=j
+            if not f1:
+                index1=-1
+            f2=False
+            for j in range(len(sls)):
+                if sls[j][1]==i.s[1]:
+                    f2=True
+                    index2=j
+            if not f2:
+                index2=-1
+           
             if index1!=-1 and index2!=-1:
                 if index1>index2:
                     temp=index1
                     index1=index2
                     index2=temp
-            if index1>0 and poi(p[sls[index1-1][1]],p[sls[index1][1]]):
-                    pi=Event(poi(p[sls[index1-1][1]],p[sls[index1][1]]),2,(min(sls[index1-1][1],sls[index1][1]),max(sls[index1-1][1],sls[index1][1])))
-                    print("index1:",pi.e,pi.t,pi.s)
-                    for r in range(len(eq)):
-                        if eq[r].e==pi.e:
-                            del eq[r]
-                            break
-                    '''
-                    if pi in eq:
-                        print("removed")
-                        eq.remove(pi)
-                    '''
-            if index2>=0 and index2<(len(sls)-1) and poi(p[sls[index2][1]],p[sls[index2+1][1]]):
-                    pi=Event(poi(p[sls[index2][1]],p[sls[index2+1][1]]),2,(min(sls[index2][1],sls[index2+1][1]),max(sls[index2][1],sls[index2+1][1])))
-                    print("index2:",pi.e,pi.t,pi.s)
-                    for r in range(len(eq)):
-                        if eq[r].e==pi.e:
-                            del eq[r]
-                            break
+            
             temp=sls[index1]
             sls[index1]=sls[index2]
             sls[index2]=temp
-            #print("poi(p[sls[{}][1]],p[sls[{}][1]]): {}".format(index1,index1-1,poi(p[sls[index1-1][1]],p[sls[index1][1]])))
-            #print("poi(p[sls[{}][1]],p[sls[{}][1]]): {}".format(index2+1,index2,poi(p[sls[index2][1]],p[sls[index2+1][1]])))
+            
             if index1>0 and poi(p[sls[index1-1][1]],p[sls[index1][1]]):
-                    print("poi(p[sls[{}][1]],p[sls[{}][1]]): {}".format(index1,index1-1,poi(p[sls[index1-1][1]],p[sls[index1][1]])))
                     pi=Event(poi(p[sls[index1-1][1]],p[sls[index1][1]]),2,(min(sls[index1-1][1],sls[index1][1]),max(sls[index1-1][1],sls[index1][1])))
                     for r in range(len(eq)):
                         if eq[r].e==pi.e:
@@ -285,21 +261,10 @@ def main():
                             del eq[r]
                             break
                     eq.append(pi)
-                    print("poi(p[sls[{}][1]],p[sls[{}][1]]): {}".format(index2+1,index2,poi(p[sls[index2][1]],p[sls[index2+1][1]])))
-                    #eq.append(Event(poi(p[sls[index2][1]],p[sls[index2+1][1]]),2,(min(sls[index2][1],sls[index2+1][1]),max(sls[index2][1],sls[index2+1][1]))))        
-            sls[index1][0]=p[sls[index1][1]][1]
-            sls[index2][0]=p[sls[index2][1]][1]
-            sls.sort(key=lambda sls: sls[0][1])
-            #print("index1:",index1,"index2:",index2)
-            #print(sls)
-            print("eq:",len(eq))
-            #print(inters)
-        
+       
         eq.sort(key=lambda eq: eq.e[0])
-        #l=len(eq)
-        print("length of eq:",len(eq))
-    print(sls)
-    print(inters)
+
+    print("Total intersections: ",len(inters))
     
     #Graph plotting
     px=[]
@@ -316,10 +281,10 @@ def main():
                 if t in p[i]:
                     return i
     for i,j in zip(x,y):
-        plt.text(i,j+1,'seg{}:({},{})'.format(ind(p,(i,j),n),i,j),size=10,color='black')
+        plt.text(i,j+1,'seg{}:({},{})'.format(ind(p,(i,j),n)+1,i,j),size=10,color='black')
     for i in range(0,2*n,2):
         plt.plot(np.array(list((px[i],px[i+1]))),np.array(list((py[i],py[i+1]))),'yo-')
-    for i in finter:
+    for i in inters:
         plt.text(i[0],i[1],'({:.1f},{:.1f})'.format(i[0],i[1]),size=10,color='black')
         plt.plot(i[0],i[1],'bo')
     plt.show()
