@@ -220,7 +220,6 @@ def main():
         
         if i.t==2: #intersection point
             inters.append(i.e)
-
             f1=False
             for j in range(len(sls)):
                 if sls[j][1]==i.s[0]:

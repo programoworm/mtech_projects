@@ -1,4 +1,13 @@
 import random
-points=[divmod(elem,101) for elem in random.sample(range(101*101),20)]
-for i in points:
-    print(i)
+from algo_voro_del import Site,Builder
+
+sites=[]
+n=8
+builder=Builder(0.0, 100.0, 0.0, 100.0)
+i = 0
+while i < n:
+    site = Site(random.randint(0,100), random.randint(0,100))
+    edge = builder.insertSite(site)
+    if (edge != None):
+        print((site.x, site.y))
+        i += 1
