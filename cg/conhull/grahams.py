@@ -30,19 +30,19 @@ class Graham:
             while(self.UH.size>1 and orient(self.UH.items[self.UH.size-2],self.UH.items[self.UH.size-1],i)<0):
                 self.UH.pop()
             self.UH.push(i)
-            print("Upper Hull Stack: ",self.UH.items)
+            #print("Upper Hull Stack: ",self.UH.items)
         
         for i in reversed(range(len(self.p))):
             while(self.LH.size>1 and orient(self.LH.items[self.LH.size-2],self.LH.items[self.LH.size-1],self.p[i])<0):
                 self.LH.pop()
             self.LH.push(self.p[i])
-            print("Lower Hull Stack: ",self.LH.items)
+            #print("Lower Hull Stack: ",self.LH.items)
         self.Hull=union(self.LH.items,self.UH.items)
    
 def orient(p,q,r):
-    print(p," ",q," ",r)
+    #print(p," ",q," ",r)
     o=(q[1]-p[1])*(r[0]-q[0])-(r[1]-q[1])*(q[0]-p[0])
-    print("orient",o)
+    #print("orient",o)
     return o
 
 def union(p1,p2):
@@ -61,13 +61,14 @@ def union(p1,p2):
 
 def main():
     p=[]
-    with open('50_points.txt',"r") as fp:
+    print("The points are:")
+    with open('points.txt',"r") as fp:
         for i in fp.readlines():
-            p.append(eval(i.strip("\n")))
+            t=eval(i.strip("\n"))
+            print(t)
+            p.append(t)
 
-    print(p)
     g=Graham(p)
-    print("The Hull points are: \n",g.Hull)
     plt.scatter(np.array([i[0] for i in p]),np.array([i[1] for i in p]),color='black') 
     xp=np.array([i[0] for i in p])
     yp=np.array([i[1] for i in p])
