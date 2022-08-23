@@ -1,8 +1,8 @@
 import random
-from algo_voro_del import Site,Builder
+from Fortunes import Site,Builder
 
 sites=[]
-n=8
+n=5
 builder=Builder(0.0, 100.0, 0.0, 100.0)
 i = 0
 while i < n:

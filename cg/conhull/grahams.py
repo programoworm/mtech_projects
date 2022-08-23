@@ -69,13 +69,13 @@ def main():
             p.append(t)
 
     g=Graham(p)
-    plt.scatter(np.array([i[0] for i in p]),np.array([i[1] for i in p]),color='black') 
+    plt.scatter(np.array([i[0] for i in p]),np.array([i[1] for i in p]),color='red') 
     xp=np.array([i[0] for i in p])
     yp=np.array([i[1] for i in p])
     for i,j in zip(xp,yp):
-        plt.text(i,j+1,'({},{})'.format(i,j),size=8,color='red')
-    
-    plt.plot(np.array([i[0] for i in g.Hull]),np.array([i[1] for i in g.Hull]),'x:g')
+        plt.text(i,j+1,'({},{})'.format(i,j),size=12,color='black')
+    print(g.Hull)
+    plt.plot(np.array([i[0] for i in g.Hull]),np.array([i[1] for i in g.Hull]),'x:y')
     plt.show()
     
 if __name__=='__main__':
