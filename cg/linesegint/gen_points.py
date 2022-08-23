@@ -1,5 +1,5 @@
 import random
-n=12
+n=3
 p=[]
 for _ in range(n): #Random line generation
     t=[]

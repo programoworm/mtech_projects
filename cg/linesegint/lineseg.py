@@ -125,7 +125,6 @@ def main():
     sls=[] #sweepline status
     inters=[]
     l=len(eq)
-    k=0
     for i in eq:
         if i.t!=2:
             for j in sls:
@@ -133,8 +132,6 @@ def main():
                 if tup:
                     j[0]=tup
             sls.sort(key=lambda sls: sls[0][1])
-
-        k+=1
 
         if i.t==0: #left end point
             sls.append([i.e,i.s])
@@ -260,7 +257,8 @@ def main():
                             del eq[r]
                             break
                     eq.append(pi)
-       
+        
+        #Sorting the points according after new events are added
         eq.sort(key=lambda eq: eq.e[0])
 
     print("Total intersections: ",len(inters))
@@ -283,6 +281,7 @@ def main():
         plt.text(i,j+1,'seg{}:({},{})'.format(ind(p,(i,j),n)+1,i,j),size=10,color='black')
     for i in range(0,2*n,2):
         plt.plot(np.array(list((px[i],px[i+1]))),np.array(list((py[i],py[i+1]))),'yo-')
+    
     for i in inters:
         plt.text(i[0],i[1],'({:.1f},{:.1f})'.format(i[0],i[1]),size=10,color='black')
         plt.plot(i[0],i[1],'bo')
